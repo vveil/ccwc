@@ -31,7 +31,8 @@ if arguments.count > 1 {
       exit(1)
     }
   }
-} else {
+}
+if content.isEmpty {
   while let line = readLine(strippingNewline: false) {
     content.append(line)
   }
