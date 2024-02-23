@@ -22,15 +22,7 @@ var output = ""
 
 var content = ""
 var path = ""
-if arguments.count == 1 {
-  while let line = readLine() {
-    content.append(line)
-  }
-  if content.isEmpty {
-    print("No input provided.")
-    exit(1)
-  }
-} else {
+if arguments.count > 1 {
   if let filePath = Array(arguments[1...]).filter({ !$0.hasPrefix("-") }).first {
     path = filePath
     if let fileContent = try? String(contentsOfFile: path) {
@@ -38,13 +30,17 @@ if arguments.count == 1 {
     } else {
       exit(1)
     }
-  } else {
+  }
+} else {
+  while let line = readLine(strippingNewline: false) {
+    content.append(line)
+  }
+  if content.isEmpty {
     exit(1)
   }
 }
 
-if arguments.count == 2 {
-  // add arguments for default call
+if (arguments.count <= 2 && !path.isEmpty) || (arguments.count == 1 && path.isEmpty) {
   arguments += ["-l", "-w", "-c"]
 }
 
@@ -65,8 +61,12 @@ if arguments.count > 2 {
   }
 
   if parameters.contains("-c") {
-    if let size = fileSizeInBytes(forPath: path) {
-      output.append("  \(String(size))")
+    if path.isEmpty {
+      output.append("  \(String(content.utf8.count))")
+    } else {
+      if let size = fileSizeInBytes(forPath: path) {
+        output.append("  \(String(size))")
+      }
     }
 
   }
